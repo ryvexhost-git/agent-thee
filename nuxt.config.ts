@@ -82,6 +82,9 @@ export default defineNuxtConfig({
     db: {
       dialect: "postgresql",
       driver: "postgres-js",
+      // Vercel installs dependencies before its database env is available to
+      // Nuxt prepare. Apply migrations explicitly with `pnpm db:migrate`.
+      applyMigrationsDuringBuild: false,
     },
   },
   runtimeConfig: {
