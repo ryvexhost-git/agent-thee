@@ -23,13 +23,9 @@ On Vercel, set them on **both** the `web` and `eve` services — and add a datab
 ### `DATABASE_URL` (required everywhere)
 
 NuxtHub is pinned to PostgreSQL with the `postgres-js` driver, so a database is
-required in development too — there is no local file fallback. Without it every
-command that loads Nuxt stops with:
-
-```
-postgres-js driver requires DATABASE_URL, POSTGRES_URL, or POSTGRESQL_URL
-environment variable when applyMigrationsDuringBuild is enabled
-```
+required in development too — there is no local file fallback. Without it, database operations and authenticated routes cannot work. The build
+can complete without a database connection, but the deployed services still
+need `DATABASE_URL` at runtime.
 
 Provision [Neon from the Vercel Marketplace](https://vercel.com/marketplace/neon) — the
 Deploy button in the README includes it — or add it to an existing project:
@@ -47,7 +43,10 @@ vercel env pull
 ```
 
 Migrations in [`server/db/migrations/postgresql/`](../server/db/migrations/postgresql/)
-are applied at build time, and on `pnpm dev`. To apply them by hand:
+are applied on `pnpm dev`. Build time migration is disabled so Vercel can
+install and build without a database connection. Once `DATABASE_URL` points at
+the intended production database, run the following before using the deployed
+app, and repeat after future schema changes:
 
 ```bash
 pnpm db:migrate
